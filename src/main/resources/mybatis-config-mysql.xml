@@ -1,0 +1,26 @@
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!--    <properties resource="application.properties"/>-->
+    <!-- 配置 mybatis 输出日志，可以打印 sql-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
+
+    <!-- 配置环境 -->
+    <environments default="mysql">
+        <!-- 配置 mysql 的环境-->
+        <environment id="mysql">
+            <!-- 事务的类型-->
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="com.test.util.HikariDataSourceFactoryOfMySQL">
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 指定映射配置文件的位置-->
+    <mappers>
+        <package name="com.test.mapper.mysql" />
+    </mappers>
+</configuration>

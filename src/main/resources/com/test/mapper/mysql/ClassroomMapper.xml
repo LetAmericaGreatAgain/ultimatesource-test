@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.mysql.ClassroomMapper">
+    <resultMap type="com.test.domain.Classroom" id="ClassroomResult">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="schoolId" column="school_id" />
+        <result property="capacity" column="capacity" />
+    </resultMap>
+
+    <sql id="selectClassroomVo">
+        select
+            classroom.id, 
+            classroom.name, 
+            classroom.school_id, 
+            classroom.capacity
+        from classroom
+    </sql>
+
+    <select id="selectClassroomList" parameterType="com.test.domain.Classroom" resultMap="ClassroomResult">
+        <include refid="selectClassroomVo"/>
+        <where>
+            true
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="schoolId != null ">
+                and school_id = #{schoolId}
+            </if>
+            <if test="capacity != null ">
+                and capacity = #{capacity}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectClassroomById" parameterType="com.test.domain.Classroom" resultMap="ClassroomResult">
+        <include refid="selectClassroomVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="classroomMultiColumnInQuery" resultMap="ClassroomResult">
+        <include refid="selectClassroomVo"/>
+        where
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="list[0].id != null ">
+                    id,
+                </if>
+
+                <if test="list[0].name != null and list[0].name != ''">
+                    name,
+                </if>
+
+                <if test="list[0].schoolId != null ">
+                    school_id,
+                </if>
+
+                <if test="list[0].capacity != null ">
+                    capacity,
+                </if>
+            </trim>
+        in
+        <foreach item="item" index="i" collection="list" open="(" separator=", " close=")">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null ">
+                    #{item.id},
+                </if>
+                <if test="item.name != null and item.name != ''">
+                    #{item.name},
+                </if>
+                <if test="item.schoolId != null ">
+                    #{item.schoolId},
+                </if>
+                <if test="item.capacity != null ">
+                    #{item.capacity},
+                </if>
+            </trim>
+        </foreach>
+
+    </select>
+
+    <insert id="insertClassroom" parameterType="com.test.domain.Classroom">
+        insert into classroom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                id,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="schoolId != null ">
+                school_id,
+            </if>
+            <if test="capacity != null ">
+                capacity,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                #{id},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="schoolId != null ">
+                #{schoolId},
+            </if>
+            <if test="capacity != null ">
+                #{capacity},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsertClassroom" parameterType="java.util.List">
+        insert into classroom
+        (id, name, school_id, capacity)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.id}, #{item.name}, #{item.schoolId}, #{item.capacity})
+        </foreach>
+    </insert>
+
+    <update id="updateClassroom" parameterType="com.test.domain.Classroom">
+        update classroom
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="schoolId != null ">
+                school_id = #{schoolId},
+            </if>
+            <if test="capacity != null ">
+                capacity = #{capacity},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdateClassroom" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update classroom
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.name != null and item.name != ''">
+                    name = #{item.name},
+                </if>
+                <if test="item.schoolId != null ">
+                    school_id = #{item.schoolId},
+                </if>
+                <if test="item.capacity != null ">
+                    capacity = #{item.capacity},
+                </if>
+            </trim>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <delete id="deleteClassroomById">
+        delete from classroom
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteClassroom" parameterType="com.test.domain.Classroom">
+        delete from classroom
+        <where>
+            true
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="schoolId != null ">
+                and school_id = #{schoolId}
+            </if>
+            <if test="capacity != null ">
+                and capacity = #{capacity}
+            </if>
+        </where>
+
+    </delete>
+
+    <delete id="batchDeleteClassroom" parameterType="java.util.List">
+        delete from classroom
+        where (id) in
+        <foreach item="item" collection="list" open="(" separator=", " close=")">
+            (#{item.id})
+        </foreach>
+    </delete>
+
+    <delete id="deleteClassroomByIdArr">
+        delete from classroom
+        where (id) in
+        <foreach item="id" index="i" collection="idArr" open="(" separator=", " close=")">
+            (#{idArr[#{i}]})
+        </foreach>
+    </delete>
+
+    <update id="saveClassroomById" parameterType="com.test.domain.Classroom">
+        insert into classroom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                id,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="schoolId != null ">
+                school_id,
+            </if>
+            <if test="capacity != null ">
+                capacity,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                #{id},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="schoolId != null ">
+                #{schoolId},
+            </if>
+            <if test="capacity != null ">
+                #{capacity},
+            </if>
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="schoolId != null ">
+                school_id = #{schoolId},
+            </if>
+            <if test="capacity != null ">
+                capacity = #{capacity},
+            </if>
+        </trim>
+    </update>
+
+    <update id="batchSaveClassroomById" parameterType="java.util.List">
+        insert into classroom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            name,
+            school_id,
+            capacity,
+        </trim>
+        values
+        <foreach item="item" index="i" collection="list" open="" separator=", " close="">
+            (
+                #{item.id},            
+                #{item.name},            
+                #{item.schoolId},            
+                #{item.capacity}
+            )
+        </foreach>
+        on duplicate key update
+        <foreach item="item" index="i" collection="list" open="" separator=", " close="">
+            <if test="item.name != null and item.name != ''">
+                name = #{item.name},
+            </if>
+            <if test="item.schoolId != null ">
+                school_id = #{item.schoolId},
+            </if>
+            <if test="item.capacity != null ">
+                capacity = #{item.capacity}
+            </if>
+        </foreach>
+    </update>
+
+
+
+</mapper>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mapper.mysql.SchoolMapper">
+    <resultMap type="com.test.domain.School" id="SchoolResult">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+    </resultMap>
+
+    <sql id="selectSchoolVo">
+        select
+            school.id, 
+            school.name, 
+            school.address
+        from school
+    </sql>
+
+    <select id="selectSchoolList" parameterType="com.test.domain.School" resultMap="SchoolResult">
+        <include refid="selectSchoolVo"/>
+        <where>
+            true
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSchoolById" parameterType="com.test.domain.School" resultMap="SchoolResult">
+        <include refid="selectSchoolVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="schoolMultiColumnInQuery" resultMap="SchoolResult">
+        <include refid="selectSchoolVo"/>
+        where
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="list[0].id != null ">
+                    id,
+                </if>
+
+                <if test="list[0].name != null and list[0].name != ''">
+                    name,
+                </if>
+
+                <if test="list[0].address != null and list[0].address != ''">
+                    address,
+                </if>
+            </trim>
+        in
+        <foreach item="item" index="i" collection="list" open="(" separator=", " close=")">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null ">
+                    #{item.id},
+                </if>
+                <if test="item.name != null and item.name != ''">
+                    #{item.name},
+                </if>
+                <if test="item.address != null and item.address != ''">
+                    #{item.address},
+                </if>
+            </trim>
+        </foreach>
+
+    </select>
+
+    <insert id="insertSchool" parameterType="com.test.domain.School">
+        insert into school
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                id,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="address != null and address != ''">
+                address,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                #{id},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="address != null and address != ''">
+                #{address},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="batchInsertSchool" parameterType="java.util.List">
+        insert into school
+        (id, name, address)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.id}, #{item.name}, #{item.address})
+        </foreach>
+    </insert>
+
+    <update id="updateSchool" parameterType="com.test.domain.School">
+        update school
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdateSchool" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update school
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.name != null and item.name != ''">
+                    name = #{item.name},
+                </if>
+                <if test="item.address != null and item.address != ''">
+                    address = #{item.address},
+                </if>
+            </trim>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <delete id="deleteSchoolById">
+        delete from school
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteSchool" parameterType="com.test.domain.School">
+        delete from school
+        <where>
+            true
+            <if test="id != null ">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+        </where>
+
+    </delete>
+
+    <delete id="batchDeleteSchool" parameterType="java.util.List">
+        delete from school
+        where (id) in
+        <foreach item="item" collection="list" open="(" separator=", " close=")">
+            (#{item.id})
+        </foreach>
+    </delete>
+
+    <delete id="deleteSchoolByIdArr">
+        delete from school
+        where (id) in
+        <foreach item="id" index="i" collection="idArr" open="(" separator=", " close=")">
+            (#{idArr[#{i}]})
+        </foreach>
+    </delete>
+
+    <update id="saveSchoolById" parameterType="com.test.domain.School">
+        insert into school
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                id,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="address != null and address != ''">
+                address,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">
+                #{id},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="address != null and address != ''">
+                #{address},
+            </if>
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+        </trim>
+    </update>
+
+    <update id="batchSaveSchoolById" parameterType="java.util.List">
+        insert into school
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            name,
+            address,
+        </trim>
+        values
+        <foreach item="item" index="i" collection="list" open="" separator=", " close="">
+            (
+                #{item.id},            
+                #{item.name},            
+                #{item.address}
+            )
+        </foreach>
+        on duplicate key update
+        <foreach item="item" index="i" collection="list" open="" separator=", " close="">
+            <if test="item.name != null and item.name != ''">
+                name = #{item.name},
+            </if>
+            <if test="item.address != null and item.address != ''">
+                address = #{item.address}
+            </if>
+        </foreach>
+    </update>
+
+
+
+</mapper>
