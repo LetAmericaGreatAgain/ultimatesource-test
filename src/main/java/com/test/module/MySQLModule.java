@@ -16,10 +16,9 @@ public class MySQLModule extends PrivateModule {
             protected void initialize() {
                 setEnvironmentId("mysql");
                 setClassPathResource("mybatis-config-mysql.xml");
-                bind(ISchoolService.class).annotatedWith(Names.named("mysql")).to(SchoolServiceImpl.class).in(Scopes.SINGLETON);
             }
         });
-//        expose(IUserService.class).annotatedWith(Names.named("mysql"));
+        bind(ISchoolService.class).annotatedWith(Names.named("mysql")).to(SchoolServiceImpl.class).in(Scopes.SINGLETON);
         expose(ISchoolService.class).annotatedWith(Names.named("mysql"));
     }
 }
