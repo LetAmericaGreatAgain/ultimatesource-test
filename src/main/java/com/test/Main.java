@@ -15,14 +15,14 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        /*Injector injector = Guice.createInjector(List.of(new DatabaseModule()));
+        Injector injector = Guice.createInjector(List.of(new DatabaseModule()));
         ISchoolService schoolService = injector.getInstance(Key.get(ISchoolService.class, Names.named("mysql")));
         School school = new School();
         school.setAddress("school address");
         school.setName("school name");
-        schoolService.insertSchool(school);*/
-        Injector injector = Guice.createInjector(List.of(new CommonModule()));
+        schoolService.insertSchool(school);
+        /*Injector injector = Guice.createInjector(List.of(new CommonModule()));
         Classroom classroom = injector.getInstance(Classroom.class);
-        System.out.println(classroom);
+        System.out.println(classroom);*/
     }
 }
